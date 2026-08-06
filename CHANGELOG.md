@@ -4,9 +4,9 @@ Adoption history and provenance for the kit and constitution. The constitution i
 (`constitution/SAGE-CONSTITUTION.md`) stays normative and app-agnostic — it does not
 carry this history; this file does.
 
-## Unreleased
+## v0.1.0 — first tagged release
 
-### Constitution introduced (v0.1.0, pre-tag)
+### Constitution introduced
 
 - **Origin of Article I (Universal Governance, G1–G5):** extracted from the
   "Documentation Governance" sections independently written in Glue's

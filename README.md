@@ -99,7 +99,7 @@ skills under `_shared/skills/` automatically.
 ```bash
 # git submodule (run from the app repo root), pinned to a released tag
 git submodule add git@github.com:maksym-shaiev/sage.git .agents/skills/_shared
-cd .agents/skills/_shared && git checkout <tag> && cd -   # no tag cut yet — see Status
+cd .agents/skills/_shared && git checkout v0.1.0 && cd -
 git add .gitmodules .agents/skills/_shared
 git commit -m "Add SAGE (Discovery phase) as a pinned submodule"
 ```
@@ -151,7 +151,7 @@ Register, no architecture spec satisfying Article V) and are marked **historical
 examples, not conformant reference output** everywhere a skill cites one — see
 `adr-writer`'s "Historical examples" table for the specifics.
 
-No tag has been cut yet; consuming repos currently pin to a commit SHA.
+`v0.1.0` is the current tag; consuming repos should pin to it (or a later tag) rather than a raw commit SHA.
 
 ## Reference implementation
 

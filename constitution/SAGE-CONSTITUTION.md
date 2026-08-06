@@ -1,6 +1,6 @@
 # SAGE Constitution
 
-Version: 0.1.0 (unreleased — tracks `main` until the first tag)
+Version: 0.1.0 (tag: `v0.1.0`)
 Applies to: every repo that mounts SAGE at `.agents/skills/_shared`
 
 This file is the single, versioned source of governance for AI agents working across

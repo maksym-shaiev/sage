@@ -13,7 +13,7 @@ cd <app-repo-root>          # e.g. apps/quest-ic/glue or apps/kato
 git submodule add git@github.com:maksym-shaiev/sage.git .agents/skills/_shared
 
 # pin to a released tag once one exists (see README "Status" for the current tag)
-cd .agents/skills/_shared && git checkout <tag> && cd -
+cd .agents/skills/_shared && git checkout v0.1.0 && cd -
 
 git add .gitmodules .agents/skills/_shared
 git commit -m "Add SAGE (Discovery phase) as a pinned submodule"
