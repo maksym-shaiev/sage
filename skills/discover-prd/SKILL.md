@@ -54,6 +54,10 @@ If the PRD is ambiguous about Must vs Even Better If, ask the human before conti
 Invoke the `api-contract-extractor` skill, passing:
 - The live OpenAPI/Swagger URL (preferred — staging environment if available)
 - Or the service codebase path if no live spec exists
+- The requirement inventory from Step 1 — needed even when a live contract exists,
+  because most initiatives need endpoints that don't exist yet. The skill runs Extract
+  Mode against what's already live and Design Mode against what the PRD implies but the
+  API doesn't have; both modes usually apply within the same initiative.
 
 **Source-of-truth precedence (enforce always):**
 1. Live API contract — what callers actually integrate against

@@ -14,6 +14,12 @@ Description: Endpoint catalog for the Widget Favorites initiative (synthetic ref
 extends one existing endpoint, adds one new endpoint, and adds one internal-only
 endpoint with no upstream dependency.
 
+**Modes used:** Extract Mode for `widgets.list` (`existing`) and the base path of
+`widget.get` (`extension`'s Verified portion); Design Mode for `widget.get`'s new field
+and for `widget.favorite` (`new`) — both proposed from the PRD, not verified against a
+live response. `widget.favorites-cache-warm` (`internal`) needs neither mode; it has no
+external anchor to verify or propose against.
+
 ## Authentication
 
 All member-facing endpoints require a member session bearer token. The internal
