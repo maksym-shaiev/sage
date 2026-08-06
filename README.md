@@ -18,9 +18,9 @@ is implemented per app, behind an adapter contract, and is not shipped here.** G
 `constitution/SAGE-CONSTITUTION.md` is the single, versioned source of governance for
 every repo that mounts this kit. It has two parts:
 
-- **Article I — Universal Governance**, extracted from the rules Glue and Kato had each
-  independently written (and had already begun to drift from each other — see the
-  constitution's Article VI for the drift this fixed). A consuming repo's `AGENTS.md`
+- **Article I — Universal Governance**, extracted from rules Glue and Kato had each
+  independently written and had already begun to drift from each other (see
+  `CHANGELOG.md` for the specific drift this fixed). A consuming repo's `AGENTS.md`
   states the rule headlines and points here for full text, instead of duplicating it.
 - **Article II — Discovery Governance**, new rules (D1-D8) governing how AI agents may
   write Discovery artifacts: no unconfirmed claim may be written as settled fact, every
@@ -43,10 +43,12 @@ for heavy parsing (OpenAPI, Figma, codebase); other shells are minor ergonomics.
 
 ```
 sage/
+├── CHANGELOG.md                        # adoption history, provenance for the constitution
 ├── constitution/
 │   └── SAGE-CONSTITUTION.md            # governance: universal rules (G1-G5), Discovery
 │                                        # rules (D1-D8), provenance model, the gate,
-│                                        # architecture completeness, extension slots
+│                                        # architecture completeness, extension slots —
+│                                        # app-agnostic; no repo or tool named anywhere
 ├── guides/
 │   ├── source-of-truth-precedence.md   # live API > codebase > PRD
 │   └── estimation-heuristics.md        # AI-assist factors, complexity, parallel timeline

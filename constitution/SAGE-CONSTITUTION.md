@@ -29,17 +29,17 @@ full text, rather than duplicating it.
 
 ## Article I — Universal Governance
 
-Applies during **both** Discovery and Delivery, in every repo that mounts SAGE. These
-five rules are extracted from the governance sections that Glue and Kato had each
-independently written (and had already begun to drift from each other before this
-constitution existed) — see Article VI for the repo-specific machinery layered on top.
+Applies during **both** Discovery and Delivery, in every repo that mounts SAGE. A
+consuming repo may layer repo-specific verification machinery on top of these five
+rules by declaring an Extension in its own `AGENTS.md` (Article VI) — this article
+states only the universal, stack-agnostic form.
 
 ### G1 — Specs Before Code, No Exceptions
 
 Before any investigation, research, or code change — even when given a specific file,
-class, or method name — read the repo's spec index (e.g. `docs/specs/README.md`) first
-and locate the relevant spec(s). A user-provided code snippet is a starting hint, not a
-reason to skip spec discovery. This rule has no exceptions.
+class, or method name — read the repo's spec index (`docs/specs/README.md` by SAGE
+convention) first and locate the relevant spec(s). A user-provided code snippet is a
+starting hint, not a reason to skip spec discovery. This rule has no exceptions.
 
 ### G2 — Undocumented Functionality → Propose Spec
 
@@ -56,8 +56,8 @@ If the codebase contradicts a spec:
 - **Minor mismatch** (naming, formatting, detail gaps): flag it, propose a spec update,
   ask permission to continue.
 
-A repo may declare additional Critical-mismatch conditions as an Extension — see Glue's
-declared extension in Article VI.
+A repo may declare additional Critical-mismatch conditions as an Extension — see
+Article VI, and that repo's own `AGENTS.md` for any extension it has declared.
 
 ### G4 — User Request Contradicts Spec → Red Alert
 
@@ -78,7 +78,7 @@ A task is not complete until this check is done and either a spec update/creatio
 proposed or explicitly declined by the human.
 
 A repo may declare additional triggers and verification steps as an Extension — see
-Glue's declared extension in Article VI.
+Article VI, and that repo's own `AGENTS.md` for any extension it has declared.
 
 ## Article II — Discovery Governance
 
@@ -227,25 +227,18 @@ declared in its own `AGENTS.md` under a **"SAGE Extensions"** heading. An extens
 - States the additional condition and the additional required action
 - MUST NOT weaken, contradict, remove, or bypass the rule it extends — it only adds
 
-Extensions do not require a change to this constitution. They are local to the
-declaring repo and are not inherited by other repos.
+Extensions do not require a change to this constitution. They are declared and read
+entirely within the declaring repo's own `AGENTS.md` — this constitution deliberately
+holds **no registry of them**. Registering repo-specific extensions here would load
+every consumer's agents with every other consumer's stack-specific tooling, and would
+force a constitution version bump (and a re-pin by every consumer) whenever any one
+repo changed its own local verification machinery — precisely the cross-repo coupling
+SAGE exists to remove.
 
-### Declared extensions
-
-**Glue** (`apps/quest-ic/glue`) — extends G3 and G5 with its spec-driven E2E toolchain:
-
-- **Extends G3:** a spec with `spec:scenarios` entries lacking a corresponding
-  `SCN-NNN-*.hurl` file is an additional Critical mismatch — hard stop until
-  `make e2e-audit` exits 0.
-- **Extends G5:** the Post-Change Spec Obligation runs two additional triggers — the
-  **API Contract Trigger** (regenerate `public/openapi.yaml`, invoke `contract-drift`,
-  create missing fixtures, run `make e2e-audit`, invoke `test-author`, re-run
-  `make e2e-audit`) and the **Behavior Trigger** (review `spec:side-effects` /
-  `spec:scenarios`, create missing fixtures, run `make e2e-audit`, invoke
-  `test-author`, re-run `make e2e-audit`). See Glue's `AGENTS.md` for the full trigger
-  file-glob conditions and exact step order.
-
-No other repo has declared an extension.
+**Example (illustrative, not a real repo):** a repo whose CI generates typed API
+clients from its OpenAPI spec might extend G3 with *"a stale generated client (older
+than the last committed OpenAPI change) is an additional Critical mismatch — hard stop
+until the client is regenerated."* That text lives only in that repo's `AGENTS.md`.
 
 ## See Also
 
