@@ -3,7 +3,10 @@
 > One block per unresolved question that blocks or risks delivery. Carry technical evidence
 > and a risk level. Placeholders in `{{...}}`. Remove this header when used.
 
-### {{OQ-ID}} — {{short title}} ({{High | Medium | Low}} risk)
+`{{OQ-ID}}` is always `OQ-NNN`, zero-padded (`OQ-001`, not `OQ-1`) — the same ID used in
+the Discovery Brief's Decisions & Assumptions Register and in `gap-report.md`.
+
+### {{OQ-NNN}} — {{short title}} ({{High | Medium | Low}} risk)
 
 **PRD requirement:** {{what the PRD requires}}
 
@@ -12,7 +15,7 @@
 **Technical evidence:**
 - {{cited evidence: endpoint absent in OpenAPI, migration that dropped a table, free-form schema, etc.}}
 
-**Question for {{team}}:** {{precise question}}
+**Owner:** {{team or role — same field name as gap-report.md}}
 
 **Options to propose:**
 1. {{option}}
@@ -20,4 +23,6 @@
 
 **Status / impact:** {{what it blocks; HIGH/MEDIUM/LOW delivery risk and why}}
 
-**Decision (when resolved):** {{ADR link}}
+**Resolution (when resolved):** {{inline: decider + date, no ADR needed | ADR link}} —
+matches the Decisions & Assumptions Register's Resolution column (SAGE Constitution
+Article III); not every resolved OQ needs an ADR.

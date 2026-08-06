@@ -2,7 +2,6 @@
 name: adr-writer
 description: Create Architecture Decision Records (ADRs) for any significant decision surfaced during Discovery or Delivery — technical, product, integration, configuration, or pattern decisions. Use when an open question is resolved by choosing between two or more real options, when a PRD requirement conflicts with codebase reality and a call must be made, or when a Product Owner, architect, or tech lead makes an explicit choice. Triggers on: "ADR", "decision record", "architecture decision", "we need to decide", "two options", "product decision", "scope decision".
 license: MIT
-compatibility: opencode
 metadata:
   audience: developers, ai-agents
   workflow: discovery, delivery
@@ -53,7 +52,7 @@ Every ADR must declare a `Subtype:` in the metadata header:
 | `Product` | Scope, UX behaviour, PRD interpretation, feature boundary calls made by PO | Flat tab list across sendouts; adjust mocks to fit architecture |
 | `Integration` | API design, endpoint structure, contract ownership, where logic lives across services | Single POST endpoint for immediate + scheduled; channel intersection in Glue |
 | `Configuration` | Where values live — ops vs runtime vs caller-specified | Email template as panel-level ops config; login autokey from DB |
-| `Pattern` | Which established code pattern to follow when alternatives exist | Use generic provider/processor chain vs custom State class |
+| `Pattern` | Which established code pattern to follow when alternatives exist | Use the standard proxy/pass-through pattern vs a custom handler class |
 
 A single ADR may span two subtypes (e.g. both `Architecture` and `Product`). In that case
 use the primary driver as the Subtype.
@@ -196,22 +195,32 @@ Every ADR that governs a scope item must be cross-referenced in both directions:
 - [ ] File is linked from `docs/specs/README.md`
 - [ ] Scope items that this decision governs have a `**Decision:**` back-link
 
-## Reference ADRs
+## Reference ADR — conformant
 
-These are the canonical examples to follow:
+`../../reference/example-initiative/decisions/ADR-001-dedicated-favorite-entity.md` —
+small, synthetic, but demonstrates every field this skill requires: `Subtype`,
+`Triggered-by`, `Decided-by`, `Decided-on`, a real options table, a quoted decider, and
+back-links in both directions to the scope items it governs.
 
-| ADR | Subtype | Why it's a good example |
+## Historical examples (Glue, pre-convention — do not pattern-match their metadata)
+
+These predate `Subtype`, `Triggered-by`, `Decided-by`, and `Decided-on` — **none of them
+has these fields** — but their prose structure (Context/Problem/Options/Decision/
+Consequences, PO quotes, technical evidence citation) informed this skill's format:
+
+| ADR | Why it's still useful | What's missing vs this skill's requirements |
 |---|---|---|
-| `survey/reminders/decisions/ADR-001-no-new-reminder-entity.md` | Architecture + Product | PO direct quote; explicit PRD adjustment requirements per consequence |
-| `survey/reminders/decisions/ADR-003-immediate-vs-scheduled.md` | Integration | Clean options table; downstream UX/SPA consequences numbered precisely |
-| `decisions/member-resolve-via-kato.md` | Integration | Technical evidence cited (hop count, runtime dependency); contract spec included |
-| `survey/reminders/decisions/ADR-004-reminder-email-template-config.md` | Configuration | Ops dependency consequence; graceful degradation fallback documented |
-| `survey/reminders/decisions/ADR-005-multi-sendout-send-groups.md` | Product | PO direct quote; "consistent with existing model" rationale; FE obligation in consequences |
+| `apps/quest-ic/glue/docs/specs/survey/reminders/decisions/ADR-001-no-new-reminder-entity.md` | PO direct quote; explicit PRD adjustment requirements per consequence | No `Subtype`/`Triggered-by`/`Decided-by`/`Decided-on`; `## Options` section missing |
+| `apps/quest-ic/glue/docs/specs/survey/reminders/decisions/ADR-003-immediate-vs-scheduled.md` | Clean options table; downstream UX/SPA consequences numbered precisely | No `Subtype`/`Triggered-by`/`Decided-by`/`Decided-on` |
+| `apps/quest-ic/glue/docs/specs/decisions/member-resolve-via-kato.md` | Technical evidence cited (hop count, runtime dependency); contract spec included | No `Subtype`/`Triggered-by`/`Decided-by`/`Decided-on` |
+| `apps/quest-ic/glue/docs/specs/survey/reminders/decisions/ADR-004-reminder-email-template-config.md` | Ops dependency consequence; graceful degradation fallback documented | No `Subtype`/`Triggered-by`/`Decided-by`/`Decided-on`; `## Options` section missing |
+| `apps/quest-ic/glue/docs/specs/survey/reminders/decisions/ADR-005-multi-sendout-send-groups.md` | PO direct quote; "consistent with existing model" rationale; FE obligation in consequences | No `Subtype`/`Triggered-by`/`Decided-by`/`Decided-on` |
 
 ## See Also
 
-- `constitution/SAGE-CONSTITUTION.md` — Article II (D4: decision provenance), Article
-  III (this ADR is the Confirmed entry graduating an Assumed/Open register row)
+- `../../constitution/SAGE-CONSTITUTION.md` — Article II (D4: decision provenance),
+  Article III (this ADR is the Confirmed entry graduating an Assumed/Open register row)
 - `skills/discover-prd/SKILL.md` — Step 4b surfaces ADR candidates during Discovery
 - `skills/scope-mapper/SKILL.md` — Step 3b creates ADRs for flagged candidates
-- `templates/open-question.md` — OQ format; OQ-NNN → ADR is the standard resolution path
+- `../../templates/open-question.md` — OQ format; OQ-NNN → ADR is the standard
+  resolution path

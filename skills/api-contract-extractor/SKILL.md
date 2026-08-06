@@ -2,7 +2,6 @@
 name: api-contract-extractor
 description: Produce a verified API contract spec from a live OpenAPI/Swagger source (preferred) or a service codebase. Use when integrating with an external/internal API and you need an authoritative endpoint catalog, auth model, and open-question list. Delegates heavy parsing to a read-isolation subagent.
 license: MIT
-compatibility: opencode
 metadata:
   audience: developers
   workflow: discovery
@@ -31,38 +30,76 @@ and token model, free-form field inventory, and open contract questions.
 
 ## Source-of-truth precedence
 
-Follow `docs/specs/process/source-of-truth-precedence.md`:
+Follow `../../guides/source-of-truth-precedence.md`:
 live OpenAPI > service codebase > PRD/Confluence. The live contract is what callers
 integrate against; the codebase is authoritative only for what OpenAPI cannot express
 (free-form object keys, auth guards, idempotency behaviour).
 
+## Endpoint status tagging
+
+Most feature initiatives are **not** pure vendor integrations against a fully-existing
+API — many endpoints an initiative needs do not exist yet and must be designed as part
+of Discovery. Tag every endpoint this skill emits with a `status`:
+
+| `status` | Meaning | Provenance (Article III) |
+|---|---|---|
+| `existing` | Already live, unchanged | Verified against the live response/OpenAPI entry |
+| `extension` | Base path exists; this initiative adds fields/behaviour to it | Base path Verified; the addition itself is Confirmed-as-proposed until built |
+| `new` | Does not exist yet; must be built as part of this initiative | Confirmed-as-proposed only — never presented as already existing (D5) |
+| `internal` | This repo/service only; no upstream dependency to verify against | N/A — no external anchor applies |
+
+For `existing`/`extension` endpoints, verify against the live spec or codebase per the
+precedence above before tagging. For `new` endpoints, there is nothing to verify against
+— propose the shape from the PRD, mark it explicitly proposed, and anchor it to the
+scope item that owns building it (`scope-mapper` output) rather than to a live response.
+See `../../reference/example-initiative/widget-api-contract.md` for a worked example
+covering all four values.
+
 ## How to use me
 
-1. **Fetch the live spec** (e.g. `{BASE}/openapi.json`), preferably the staging/target env.
-   Note whether docs are enabled per environment.
-2. **Delegate parsing to a read-isolation subagent** (the built-in `explore` agent). Large
-   OpenAPI JSON will truncate in the main thread; have the subagent parse the saved output
+1. **Determine what's verifiable.** For each endpoint the PRD implies, check whether it
+   already exists (live spec / codebase) or must be newly built. This determines its
+   `status` (above) before anything else.
+2. **Fetch the live spec** (e.g. `{BASE}/openapi.json`), preferably the staging/target
+   env, for the `existing`/`extension` portion. Note whether docs are enabled per
+   environment. If no live spec exists at all (a greenfield service), fall back to the
+   codebase, or — for a genuinely new service with no code yet — proceed with every
+   endpoint tagged `new` and say so explicitly; do not fabricate a contract to extract.
+3. **Delegate parsing to a read-isolation subagent** (opencode's built-in `explore`
+   agent, or equivalent read-isolation context on other vendors). Large OpenAPI JSON
+   will truncate in the main thread; have the subagent parse the saved output
    and return a distilled summary: paths, security schemes, request/response schemas, and
    any free-form objects. This is the efficiency win — do not parse tens of KB inline.
-3. **Build the endpoint catalog** grouped by resource, with method, path, auth scope,
-   request body schema, response schemas (per status), and key query params.
-4. **Document the auth/token model** — schemes, scopes, how tokens are issued/stored.
-5. **Inventory free-form fields** (`additionalProperties: true`, no declared keys). List
+4. **Build the endpoint catalog** grouped by resource, with method, path, `status`, auth
+   scope, request body schema, response schemas (per status code), and key query params.
+5. **Document the auth/token model** — schemes, scopes, how tokens are issued/stored.
+6. **Inventory free-form fields** (`additionalProperties: true`, no declared keys). List
    expected keys from the PRD but mark them UNVERIFIED pending the owning team.
-6. **Detect open questions** — missing write endpoints, read-only configs, dropped
+7. **Detect open questions** — missing write endpoints, read-only configs, dropped
    capabilities (cross-check codebase migrations). Record each via the open-question
    template with a risk level.
-7. **Emit the contract spec** in the project format; add open questions; cross-link ADRs
-   where decisions resolve them.
+8. **Emit the contract spec**: overview, auth, base URL, endpoint catalog (with `status`
+   on every row), response schemas, free-form field inventory, state enums, open contract
+   questions, see-also. Add open questions; cross-link ADRs where decisions resolve them.
 
 ## Output
 
-A `*-api-contract.md` spec: overview, auth, base URL, endpoint catalog, response schemas,
-free-form field inventory, state enums, open contract questions, see-also.
+A `*-api-contract.md` spec: overview, auth, base URL, endpoint catalog (every endpoint
+tagged with `status`), response schemas, free-form field inventory, state enums, open
+contract questions, see-also.
+
+## Reference output
+
+- `../../reference/example-initiative/widget-api-contract.md` — conformant, small,
+  demonstrates all four `status` values
 
 ## See Also
 
-- `docs/specs/process/source-of-truth-precedence.md`
-- `docs/specs/process/_templates/open-question.md`
-- `docs/specs/incentives/qims-api-contract.md` — reference output
+- `../../guides/source-of-truth-precedence.md`
+- `../../templates/open-question.md`
+- `apps/quest-ic/glue/docs/specs/incentives/qims-api-contract.md` — **historical**
+  reference output; predates the `status` tagging convention above (it models a
+  vendor-integration initiative where every endpoint already existed, so `status` did
+  not yet need to exist) — do not pattern-match its structure for a mixed
+  new/existing-endpoint initiative
 - `gap-analyzer`, `scope-mapper` skills (consume this output)

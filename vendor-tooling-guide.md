@@ -40,7 +40,8 @@ Notes:
   full efficiency layer available.
 - **GitHub Copilot** has prompt files + MCP but **no subagent concept**, so its efficiency
   layer is partial; it falls back to the core most heavily. Treat Copilot support as a
-  deferred, on-request target (see the source app's workflow plan TODO).
+  deferred, on-request target — build a shell for it when a consuming repo actually
+  needs one, not speculatively.
 
 ## Generation recipes
 
@@ -87,7 +88,7 @@ a custom one — it already provides read isolation.
 
 | Vendor | Shell | Efficiency added |
 |---|---|---|
-| opencode | `.opencode/command/discover-prd.md` (exists) + `explore` for reads | routing-turn skip + read isolation + parallelism |
+| opencode | `.opencode/command/discover-prd.md` (exists in Glue as of this writing) + `explore` for reads | routing-turn skip + read isolation + parallelism |
 | Claude Code | `.claude/commands/discover-prd.md` (mirror body) + Claude subagents | same |
 | Copilot | `.github/prompts/discover-prd.prompt.md` | routing-turn skip only; reads run inline |
 
@@ -96,11 +97,11 @@ All three invoke the same `discover-prd` skill and produce the same Discovery Br
 ## Equivalence check
 
 Before relying on a new shell, run the underlying skill directly once and compare outputs
-on a known input (e.g. the QIMS reference PRD): same specs, same scope items, same Jira task
-set. If they differ, the shell has logic it shouldn't — move it back into the skill.
+on a known input — `reference/example-initiative/` is small enough to run end-to-end and
+compare by hand: same specs, same scope items, same Jira task set. If they differ, the
+shell has logic it shouldn't — move it back into the skill.
 
 ## See Also
 
 - `README.md` — kit overview and consumption
-- `apps/quest-ic/glue/docs/specs/process/ai-sdd-workflow-plan.md` — the workflow plan
-- skills/ — the core skills shells wrap
+- `skills/` — the core skills shells wrap

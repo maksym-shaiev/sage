@@ -12,7 +12,7 @@ As a {{user type}}, I {{want/need}} {{capability}} so that {{benefit}}.
 
 ## Technical Tasks
 
-1. Build {{screen/component}} in the {{SPA}}.
+1. Build {{screen/component}} in the {{frontend app/SPA}}.
 2. {{Fields / interactions / states}}.
 3. Call `{{glue endpoint}}` on {{trigger}}; handle loading state.
 4. Handle states: success, empty, validation error, service-unavailable.

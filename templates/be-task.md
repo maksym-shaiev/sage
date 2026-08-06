@@ -11,11 +11,19 @@ As a {{user type}}, I {{want/need}} {{capability}} so that {{benefit}}.
 
 ## Technical Tasks
 
-1. {{For generic-chain endpoints}}: Add `shortName: '{{short_name}}'` to `{{Client}}::mapUri()` → `{{upstream method+path}}`; declare `provider: 'source.{{src}}.provider.read'` (or `processor: 'source.{{src}}.provider.write'`) on the `#[ApiResource]` operation — **no custom State class**.
-2. {{For exceptions only}}: Implement `{{CustomProcessorOrProvider}}` — **custom State class, justified exception** because {{reason the generic chain cannot express it}}. Reference the architecture spec's client-service section.
+1. {{For endpoints matching an established pass-through/proxy pattern in this
+   codebase}}: wire the route to {{upstream method+path}} using the existing
+   generic pattern — **no custom handler class** unless justified below.
+2. {{For exceptions only}}: implement a custom handler/processor — **justified
+   exception** because {{reason the standard pattern cannot express it}}. Reference
+   the architecture spec's integration section.
 3. {{Entity/migration/config steps as needed}}.
-4. Secure the operation with `is_granted('{{ROLE}}')`.
-5. Write unit tests for {{class}}.
+4. Secure the operation per the codebase's established auth pattern ({{role/scope
+   required}}).
+5. Write unit tests for {{class/module}}.
+
+{{Adapt step 1/2 wording to whatever this codebase's actual established pattern is —
+do not invent framework-specific syntax; use what is visible in the codebase (D5).}}
 
 ## Acceptance Criteria
 

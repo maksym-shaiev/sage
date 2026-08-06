@@ -25,21 +25,24 @@ acceptance criteria. Absent those, reduce the assumed gain.
 
 ## Complexity signals (per item)
 
-Use the State-implementation approach as the primary backend complexity signal:
+Use the implementation approach as the primary backend complexity signal — framed
+generically so it applies regardless of stack or framework:
 
 | Signal | Complexity | Typical BE size |
 |---|---|---|
-| Generic provider/processor chain (no custom State class) | Low | 0.5–1.5 days |
-| Single custom State class, one upstream call | Medium | 1–2 days |
-| Composite custom State (multiple upstream calls merged) | Medium-High | 2–3 days |
-| Multi-step flow (e.g. provisioning) or legacy-codebase change | High | 3–5 days + spike |
+| Standard proxy/pass-through of an existing pattern, no custom logic | Low | 0.5–1.5 days |
+| One new custom handler/class, one upstream call | Medium | 1–2 days |
+| Composite custom logic (multiple upstream calls merged or orchestrated) | Medium-High | 2–3 days |
+| Multi-step flow (e.g. provisioning) or unfamiliar/legacy-codebase change | High | 3–5 days + spike |
 
 Frontend complexity signal: number of screens/steps and statefulness (a 3-step wizard >
 a single table > a read-only card).
 
 ## Buffer and spikes
 
-- Add a **~15% buffer** for integration, review, and QA across the whole estimate.
+- Add a **~20% buffer** for integration, review, and QA across the whole estimate. (The
+  Survey Reminders reference run used 20% in practice; this guide previously stated
+  15% — reconciled toward the figure actually used.)
 - For any **High** item touching an unfamiliar/legacy codebase, add a **1-day spike**
   before committing the number (e.g. the Kato sync adapter in the QIMS run).
 - Items **blocked** by an open question are **not estimated** until the question resolves.
@@ -52,16 +55,25 @@ a single table > a read-only card).
   early if dependencies allow.
 - Total calendar time = sum of phase durations + buffer.
 
-## Worked example (QIMS reference run)
+## Worked example (Glue's QIMS reference run — historical, pre-convention)
+
+Numbers below are real, from before this guide's 20% buffer figure and the `OQ-NNN`
+zero-padding convention existed (that run used unpadded `OQ-2`) — illustrative of scale,
+not a format to copy:
 
 - 1 BE + 1 FE, AI-assisted, full-time.
 - Phase 2 (Admin Core): BE ~13.5 days, FE ~18.5 days → ~4 weeks (FE bottleneck).
 - Whole programme: BE ~46 days, FE ~51 days incl. buffer → **~10 weeks** calendar.
 - ITEM-00 (Kato sync, High/legacy) flagged for a 1-day spike before its 5-day estimate.
-- ITEM-22 (blocked by OQ-2) left unestimated.
+- ITEM-22 (blocked by OQ-2, unpadded — historical) left unestimated.
+
+See `../reference/example-initiative/scope-of-work.md` for a small, fully conformant
+worked example using the current conventions end-to-end.
 
 ## See Also
 
-- `docs/specs/process/ai-sdd-workflow-plan.md` — overall workflow
-- `docs/specs/process/_templates/vp-email.md` — estimate communication format
-- `docs/specs/incentives/scope-of-work.md` — reference scope that was estimated
+- `../templates/vp-email.md` — estimate communication format
+- `../reference/example-initiative/scope-of-work.md` — conformant reference scope
+- `apps/quest-ic/glue/docs/specs/incentives/scope-of-work.md` — **historical** reference
+  scope that was estimated using these heuristics (predates the 20% buffer figure
+  above and the `Lanes:`/`ITEM-NN` conventions — do not pattern-match its structure)

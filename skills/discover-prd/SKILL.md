@@ -2,7 +2,6 @@
 name: discover-prd
 description: Orchestrate the discovery phase of the SDD workflow — read a PRD plus linked sources, verify the API contract, inventory Figma, run gap analysis, and produce a discovery brief. Use at the start of a new integration. Delegates heavy reads to read-isolation subagents.
 license: MIT
-compatibility: opencode
 metadata:
   audience: developers
   workflow: discovery

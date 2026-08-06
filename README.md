@@ -54,16 +54,18 @@ sage/
 │   └── estimation-heuristics.md        # AI-assist factors, complexity, parallel timeline
 ├── templates/
 │   ├── be-task.md  fe-task.md          # Jira task description contracts
-│   ├── scope-item.md                   # scope-of-work item block
 │   ├── gap-report.md  open-question.md # gap analysis (+ evidence + H/M/L risk)
 │   └── vp-email.md  jira-comment.md    # stakeholder comms
+│   (scope-of-work items use scope-mapper's own inline template — see that skill)
 ├── skills/                             # ALL pipeline skills (app-agnostic)
 │   ├── discover-prd/                   # orchestrate discovery: PRD + API + Figma + gaps → brief + ADR candidates
-│   ├── api-contract-extractor/         # live OpenAPI → verified contract
+│   ├── api-contract-extractor/         # live OpenAPI → verified contract, status-tagged
 │   ├── gap-analyzer/                   # PRD vs contract → coverage table + open questions
 │   ├── adr-writer/                     # produce ADRs for any significant decision (technical, product, integration, config)
 │   ├── scope-mapper/                   # requirements + contract + Figma → scope-of-work spec (creates ADRs first)
 │   └── jira-backlog-builder/           # scope of work → [BE]+[FE] Jira tasks (one-pair-then-confirm)
+├── reference/example-initiative/       # small, synthetic, fully conformant example of
+│                                        # every skill's output — see its own README.md
 └── vendor-tooling-guide.md             # how to generate vendor shells from core skills
 ```
 

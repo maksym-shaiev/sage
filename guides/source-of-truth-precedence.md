@@ -30,7 +30,7 @@ is a finding, not an error in either.
 ## Handling conflicts
 
 - **Live API vs PRD** — if the PRD requires a capability the live API lacks, record an open
-  question with technical evidence and a risk level (see `_templates/open-question.md`). Do
+  question with technical evidence and a risk level (see `../templates/open-question.md`). Do
   not assume the API will gain it; do not silently drop the requirement.
 - **Codebase vs PRD** — if the codebase proves a capability was removed (e.g. a migration
   dropping a table), the removal wins over the PRD's assumption. Flag the PRD as stale.
@@ -41,19 +41,28 @@ is a finding, not an error in either.
   (`additionalProperties: true`, no declared keys), treat its keys as UNVERIFIED. Propose
   PRD-derived keys but mark them pending confirmation from the owning team.
 
-## Worked example (QIMS reference run)
+## Worked example (synthetic)
 
-- The PRD listed budget management as a Must and stated QIMS is the system of record for
-  budgets. The live OpenAPI had **no** budget write endpoints, and a codebase migration
-  (`bc214338afae`) proved the `budgets` table was dropped. Precedence: codebase + live API
-  over PRD → budget write is a confirmed gap (OQ-1), not an assumption. The PRD was flagged
-  stale; an interim approach was decided in ADR-003.
-- `points_config` was free-form in the OpenAPI with no declared keys → expiration rules
-  marked UNVERIFIED (OQ-2), pending the QIMS team.
+- A PRD requires a favorite-limit rule; no live endpoint or evidence specifies a value.
+  Precedence does not resolve this one — there is no live/codebase source to defer to,
+  only silence. That is recorded as an open question (`OQ-001`) and left open, not
+  defaulted — see `../reference/example-initiative/discovery-brief.md`.
+- A PRD says "reuse existing infrastructure" without naming which; the codebase has one
+  candidate table. Codebase evidence closes that sub-question (`OQ-002`, Verified) even
+  though the PRD never specified it.
+
+## Historical example (Glue, pre-convention)
+
+`apps/quest-ic/glue/docs/specs/incentives/qims-api-contract.md` — the PRD listed budget
+management as a Must and stated the vendor system is the record for budgets; the live
+OpenAPI had no budget write endpoints, and a codebase migration proved the underlying
+table was dropped. Precedence (codebase + live API over PRD) made this a confirmed gap,
+not an assumption; the PRD was flagged stale. **Historical — predates the `OQ-NNN`
+zero-padding convention** (its open questions are numbered `OQ-1`/`OQ-2` unpadded); do
+not pattern-match its ID format.
 
 ## See Also
 
-- `docs/specs/process/ai-sdd-workflow-plan.md` — overall workflow
-- `docs/specs/process/_templates/open-question.md` — open-question format
-- `docs/specs/process/_templates/gap-report.md` — gap-report format
-- `docs/specs/incentives/qims-api-contract.md` — reference contract with open questions
+- `../reference/example-initiative/` — conformant synthetic example applying this rule
+- `../templates/open-question.md` — open-question format
+- `../templates/gap-report.md` — gap-report format

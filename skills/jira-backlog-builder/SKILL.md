@@ -2,7 +2,6 @@
 name: jira-backlog-builder
 description: Create paired [BE] + [FE] Jira tasks from a scope-of-work spec, with labels, components, parent epic, and BE-blocks-FE links. Use when turning an approved scope of work into a Jira backlog. Enforces one-pair-then-confirm before bulk creation.
 license: MIT
-compatibility: opencode
 metadata:
   audience: developers
   workflow: backlog
@@ -57,12 +56,23 @@ Extract all items in order:
 - Even Better If items after all Must phases
 - Note Blocked items but **do not create tasks for them** (see Blocked items below)
 
-For each non-blocked item, determine:
-- Task type: `[BE]+[FE]` pair / `BE-only` / `FE-only`
+For each non-blocked item, determine task type from the scope item's **`**Lanes:**`
+field** — not from free-form prose:
+
+| `**Lanes:**` value | Task type |
+|---|---|
+| `backend, frontend` (or `frontend, backend`) | `[BE]+[FE]` pair, with blocks link |
+| `backend` only | `BE-only` — create only `[BE]` |
+| `frontend` only | `FE-only` — create only `[FE]` |
+| anything else (a third lane name) | **not yet supported** — see Special cases below; do not guess a label or template for it |
+
+Also extract:
 - Task summary prefix: `[BE] {ITEM-ID} — {Title}` / `[FE] {ITEM-ID} — {Title}`
 - API contract block (from the scope item's `#### API contract` section)
-- Figma reference (from the scope item's `**Figma:**` line — omit for BE-only)
-- Implementation note (from the scope item's `**Implementation note:**` line)
+- Figma reference (from the scope item's `**Figma:**` line — present only when
+  `frontend` is in Lanes)
+- Implementation note (from the scope item's `**Implementation note:**` line — context
+  only, never used to determine task type; that is `**Lanes:**`'s job)
 
 ### Step 2 — One-pair-then-confirm (ENFORCED)
 
@@ -82,7 +92,7 @@ unless the human asks to pause.
 
 For each non-blocked item, using `createJiraIssue` and `createIssueLink`:
 
-**`[BE]` task body** (from `_shared/templates/be-task.md`):
+**`[BE]` task body** (from `../../templates/be-task.md`):
 
 ```
 ## Story
@@ -114,7 +124,7 @@ Response {code}: {shape}
 Fields: `summary = "[BE] {ITEM-ID} — {Title}"`, `issueTypeName = "Task"`,
 `labels = ["backend"]`, `parent = {epic key}`.
 
-**`[FE]` task body** (from `_shared/templates/fe-task.md`):
+**`[FE]` task body** (from `../../templates/fe-task.md`):
 
 ```
 ## Story
@@ -165,17 +175,18 @@ After all tasks are created, output a summary table:
 |---|---|---|---|---|
 | ITEM-01 | QW-1001 | QW-1002 | ✓ | |
 | ITEM-02 | QW-1003 | — | — | BE-only |
-| ITEM-03 | — | — | — | BLOCKED (OQ-1) |
+| ITEM-03 | — | — | — | BLOCKED (OQ-001) |
 ```
 
 ## Special cases
 
 | Case | Handling |
 |---|---|
-| **BE-only** (scope item says "No FE task") | Create only `[BE]`; no FE task; no blocks link |
-| **FE-only** (scope item says "No BE task") | Create only `[FE]`; no BE task; no blocks link |
+| **BE-only** (`**Lanes:** backend`) | Create only `[BE]`; no FE task; no blocks link |
+| **FE-only** (`**Lanes:** frontend`) | Create only `[FE]`; no BE task; no blocks link |
 | **Blocked** | Skip task creation; comment on epic |
 | **Even Better If** | Create tasks after all Must items; same format |
+| **Third lane** (`**Lanes:**` names anything other than `backend`/`frontend`) | This skill's templates (`be-task.md`/`fe-task.md`) only cover those two. Do not invent a label or template for the unrecognised lane (D5) — flag it in the Step 4 report as "lane not supported — create manually" and move on to the next item. |
 
 ## Refuse conditions
 
@@ -184,13 +195,22 @@ After all tasks are created, output a summary table:
 - Project key or epic key not determinable — ask the human before creating any task
 - One-pair-then-confirm not passed — do not continue past the first pair without explicit approval
 
-## Reference outputs
+## Reference input — conformant
 
-- 39 tasks + 19 blocks links — QIMS integration (epic QW-616)
-- 18 tasks + dependency links — Survey Reminders (epic QW-746)
+`../../reference/example-initiative/scope-of-work.md` — its `**Lanes:**` field on each
+item is what this skill's Step 1 parses; small enough to trace by hand end-to-end.
+
+## Historical reference (Glue, pre-convention)
+
+QIMS integration (epic QW-616, 39 tasks + 19 blocks links) and Survey Reminders (epic
+QW-746, 18 tasks + dependency links) were both run against scope-of-work files that
+predate `**Lanes:**` — Survey Reminders' lane-prefixed IDs (`K-1`/`G-1`/`FE-1`) were
+detected by pattern, not by an explicit field. Do not pattern-match that detection
+method; the `**Lanes:**` field above is now the only supported mechanism.
 
 ## See Also
 
-- `skills/scope-mapper/SKILL.md` — produces the input this skill consumes
-- `templates/be-task.md` — `[BE]` task description format
-- `templates/fe-task.md` — `[FE]` task description format
+- `skills/scope-mapper/SKILL.md` — produces the input this skill consumes, including
+  the `**Lanes:**` field this skill's Step 1 reads
+- `../../templates/be-task.md` — `[BE]` task description format
+- `../../templates/fe-task.md` — `[FE]` task description format

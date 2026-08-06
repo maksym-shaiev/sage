@@ -14,7 +14,11 @@ blocked status. Nothing is silently dropped.
 
 ## Gaps / Open Questions
 
-### {{OQ-ID}} — {{short title}} ({{High | Medium | Low}})
+`{{OQ-ID}}` is always `OQ-NNN`, zero-padded (`OQ-001`, not `OQ-1`), sequential within
+the initiative — matches the ID used in the Discovery Brief's Decisions & Assumptions
+Register (SAGE Constitution Article III).
+
+### {{OQ-NNN}} — {{short title}} ({{High | Medium | Low}})
 
 **PRD requirement:** {{what the PRD asks for}}
 
@@ -27,7 +31,10 @@ blocked status. Nothing is silently dropped.
 1. {{option}} — {{pro/con}}
 2. {{option}} — {{pro/con}}
 
-**Owner / question for:** {{team}}
+**Owner:** {{team or role}}
+
+**ADR required:** {{Yes — Subtype | No}} — feeds the Discovery Brief's `ADR required`
+column (see `discover-prd` Step 4b)
 
 **Status / impact:** {{what it blocks; delivery risk}}
 

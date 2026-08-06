@@ -2,7 +2,6 @@
 name: scope-mapper
 description: Map PRD requirements plus a verified API contract and Figma inventory into a phased scope-of-work spec, one item per requirement with an API contract block and Figma reference. Use after discovery and gap analysis, before creating a Jira backlog.
 license: MIT
-compatibility: opencode
 metadata:
   audience: developers
   workflow: scoping
@@ -71,8 +70,7 @@ Use the gap report and ADR decisions to determine phasing. When unclear, ask the
 
 ### Step 3 — Write scope items
 
-One block per requirement, in phase order. Use this template (adapted from
-`_shared/templates/scope-item.md`):
+One block per requirement, in phase order. Use this template:
 
 ```
 ### {ITEM-ID} — {Title}
@@ -81,13 +79,18 @@ One block per requirement, in phase order. Use this template (adapted from
 
 **Importance:** Must | Even Better If
 
+**Lanes:** {comma-separated: backend | frontend | any other lane name the initiative
+uses, e.g. a cross-repo team. Determines which Jira tasks jira-backlog-builder creates
+— see that skill's Special Cases table for what each combination produces.}
+
 **Notes:** {clarifying context from gap report or discovery}
 
 {If blocked}: **Status: BLOCKED** — awaiting {OQ-ID}. No tasks until resolved.
 
 **Decision:** {ADR link if a decision governs this item — omit if none}
 
-**Figma:** [{screen name}]({figma url}?node-id={node-id})  ← omit for BE-only items
+**Figma:** [{screen name}]({figma url}?node-id={node-id})  ← omit if `frontend` is not
+in Lanes
 
 #### API contract
 
@@ -96,9 +99,14 @@ Auth: {scheme}
 Request: {shape — field names and types}
 Response {code}: {shape}
 
-**Implementation note:** {free-form — e.g. "new endpoint", "extends existing GET /x",
-"BE-only — no FE task", "FE-only — endpoint already exists"}
+**Implementation note:** {free-form context — e.g. "new endpoint", "extends existing
+GET /x". Do not use this field to signal BE-only/FE-only — that is `**Lanes:**`'s job.}
 ```
+
+`{ITEM-ID}` is always `ITEM-NN` (flat, zero-padded, sequential across the whole
+initiative) — never lane-prefixed (not `K-1`/`G-1`/`FE-1`). Lane information belongs in
+the `**Lanes:**` field, not the identifier, so an item's ID is stable even if its lane
+assignment changes during scoping.
 
 **Coverage rule (hard):** every Must requirement must end in one of:
 - A scope item (with or without a Figma reference)
@@ -136,7 +144,7 @@ so every scope item can reference its governing decision from the start.
 
 ### Step 4 — Append the estimation table
 
-Using `_shared/guides/estimation-heuristics.md`:
+Using `../../guides/estimation-heuristics.md`:
 
 ```markdown
 ## Delivery Estimate
@@ -163,7 +171,7 @@ AI-assist factors applied: BE ~50–60% faster; FE ~25–30% faster vs. unassist
 | Phase 2 | {IDs} | {n} | {n} | max(BE, FE) |
 
 Phase duration = max(BE days, FE days) — BE and FE run in parallel.
-Total = sum of phase durations + 15% buffer.
+Total = sum of phase durations + 20% buffer.
 
 **Total estimate: ~{n} weeks** (1 BE + 1 FE, AI-assisted, full-time).
 
@@ -198,17 +206,30 @@ Update `docs/specs/README.md` with the new entry.
 `docs/specs/{domain}/scope-of-work.md` — the approved scope of work, ready for
 `jira-backlog-builder`
 
-## Reference outputs
+## Reference output — conformant
 
-- `docs/specs/incentives/scope-of-work.md` — QIMS integration (24 items, 3 phases)
-- `docs/specs/survey/reminders/scope-of-work.md` — Survey Reminders (18 items, K/G/FE split)
-- `docs/specs/survey/activities-v2-delivery-scope.md` — Activities V2 cross-team scope
+`../../reference/example-initiative/scope-of-work.md` — small, synthetic, but
+demonstrates `ITEM-NN` + `Lanes:`, a blocked item with no tasks created for it, and a
+`**Decision:**` back-link to its governing ADR.
+
+## Historical reference outputs (Glue, pre-convention — do not pattern-match their format)
+
+These predate `ITEM-NN` + `Lanes:` and each used a different, mutually incompatible
+scope-item format — this is the concrete evidence that motivated canonicalising on one
+format above:
+
+- `apps/quest-ic/glue/docs/specs/incentives/scope-of-work.md` — QIMS integration (24
+  items, 3 phases; flat `ITEM-NN` but no `Lanes:` field, `#### Glue contract` heading)
+- `apps/quest-ic/glue/docs/specs/survey/reminders/scope-of-work.md` — Survey Reminders
+  (18 items; lane-prefixed IDs `K-1`/`G-1`/`FE-1` instead of `ITEM-NN` + `Lanes:`)
+- `apps/quest-ic/glue/docs/specs/survey/activities-v2-delivery-scope.md` — Activities V2
+  (table-based, no scope-item blocks at all)
 
 ## See Also
 
 - `skills/discover-prd/SKILL.md` — produces the inputs this skill consumes
-- `skills/jira-backlog-builder/SKILL.md` — consumes this skill's output
+- `skills/jira-backlog-builder/SKILL.md` — consumes this skill's output (reads
+  `**Lanes:**` to determine which Jira tasks to create)
 - `skills/gap-analyzer/SKILL.md` — gap report input
-- `guides/source-of-truth-precedence.md`
-- `guides/estimation-heuristics.md`
-- `templates/scope-item.md`
+- `../../guides/source-of-truth-precedence.md`
+- `../../guides/estimation-heuristics.md`
