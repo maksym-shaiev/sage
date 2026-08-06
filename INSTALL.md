@@ -1,68 +1,62 @@
-# ai-sdd-kit — Install & Handoff
+# SAGE — Install & Handoff
 
-This kit was extracted locally at `maru/libs/ai-sdd-kit`. The steps below require Bitbucket
-org access and are intended to be run by a human. Until they are done, apps can consume the
-kit via a local symlink (dev-only).
+This kit is published at `git@github.com:maksym-shaiev/sage.git`. It ships the
+**Discovery phase only** — guides, templates, and all six Discovery-pipeline skills.
+Delivery-phase enforcement (spec schema, CI audit, test generation) is per-app and not
+part of this kit; see `README.md`.
 
-## 1. Create the remote repo (human, Bitbucket access required)
-
-```bash
-# Create an empty repo in the stagwellmc org, e.g. "ai-sdd-kit", then:
-cd /home/max/maru/libs/ai-sdd-kit
-git init
-git add .
-git commit -m "Initial ai-sdd-kit: SDD workflow core (guides, templates, core skills)"
-git branch -M main
-git remote add origin git@bitbucket.org:stagwellmc/ai-sdd-kit.git
-git push -u origin main
-```
-
-## 2. Wire into an app as a submodule (preferred)
+## 1. Wire into an app as a submodule (the standard way — required for committed work)
 
 ```bash
-cd <app-repo-root>          # e.g. apps/quest-ic/glue
-git submodule add git@bitbucket.org:stagwellmc/ai-sdd-kit.git .agents/skills/_shared
-git commit -m "Add ai-sdd-kit shared SDD workflow as submodule"
+cd <app-repo-root>          # e.g. apps/quest-ic/glue or apps/kato
+git submodule add git@github.com:maksym-shaiev/sage.git .agents/skills/_shared
+
+# pin to a released tag once one exists (see README "Status" for the current tag)
+cd .agents/skills/_shared && git checkout <tag> && cd -
+
+git add .gitmodules .agents/skills/_shared
+git commit -m "Add SAGE (Discovery phase) as a pinned submodule"
 ```
 
-App-local skills then reference `.agents/skills/_shared/guides/*` and
+The agent discovers all skills under `.agents/skills/_shared/skills/*/SKILL.md`
+automatically. App-local skills may reference `.agents/skills/_shared/guides/*` and
 `.agents/skills/_shared/templates/*`.
 
-## 3. Local symlink alternative (dev-only, before the remote exists)
+Updating the pin later:
+
+```bash
+cd .agents/skills/_shared && git fetch --tags && git checkout <new-tag> && cd -
+git add .agents/skills/_shared
+git commit -m "Bump SAGE to <new-tag>"
+```
+
+## 2. Local symlink (dev-only — solo iteration, never committed)
 
 ```bash
 cd <app-repo-root>
-ln -s ../../../../libs/ai-sdd-kit .agents/skills/_shared   # adjust depth per app location
-# do NOT commit the symlink; replace with the submodule once the remote exists
+ln -s <absolute-or-relative-path-to>/libs/sage .agents/skills/_shared
+# do NOT commit this symlink; it cannot be shared with another developer.
+# Replace with the submodule (step 1) for any work meant to be shared or committed.
 ```
 
-## 4. De-duplicate the Glue copies (after submodule is wired)
+## 3. Verify
 
-The core artifacts currently exist both in Glue (`docs/specs/process/` +
-`.agents/skills/api-contract-extractor`, `gap-analyzer`) and in this kit. Once the submodule
-is mounted, decide per artifact:
+- The agent (or `ls .agents/skills/_shared/skills/`) lists all six skills:
+  `discover-prd`, `api-contract-extractor`, `gap-analyzer`, `adr-writer`, `scope-mapper`,
+  `jira-backlog-builder`.
+- No app should keep a local copy of a core skill — core skills are consumed only
+  through `_shared`. If an app-local skill directory shares a name with a core skill,
+  remove the local copy; the shared one supersedes it.
 
-- **Guides + templates**: keep the canonical copy in the kit; in Glue, replace the
-  `docs/specs/process/` guide/template files with short pointers to
-  `.agents/skills/_shared/guides|templates/...`, OR leave Glue's copies as the reference
-  implementation and treat the kit as the distributable. Recommended: pointer files in Glue
-  to avoid drift.
-- **Core skills** (`api-contract-extractor`, `gap-analyzer`): remove the Glue-local copies
-  once `_shared` is mounted; opencode discovers skills under `_shared`.
-- **App skills** (`discover-prd`, `scope-mapper`, `jira-backlog-builder`): stay Glue-local;
-  no change.
+## Current state
 
-> Do this de-duplication as a deliberate follow-up commit, not automatically — verify skill
-> discovery works from `_shared` first.
-
-## 5. Verify
-
-- `make` / opencode picks up skills from `_shared`.
-- Run the equivalence check in `vendor-tooling-guide.md` on the QIMS reference PRD.
-
-## Current state (as extracted)
-
-- Kit content is complete and self-contained at `maru/libs/ai-sdd-kit`.
-- No remote repo yet; no submodule wired.
-- Glue retains its own authoritative copies (nothing in Glue was removed).
-- This is fully reversible: deleting `maru/libs/ai-sdd-kit` leaves Glue untouched.
+- Kit content is versioned at `git@github.com:maksym-shaiev/sage.git`, branch `main`.
+- No released tag yet — pin instructions above will name one once cut.
+- Consuming apps and their current mount mechanism:
+  - **Glue** (`apps/quest-ic/glue`): `.agents/skills/_shared` is currently a local,
+    untracked symlink to `libs/sage` — pending migration to the pinned submodule form
+    (step 1) once a tag is cut.
+  - **Kato** (`apps/kato`): not yet mounted.
+- This is fully reversible: removing the submodule/symlink and `libs/sage` leaves each
+  app's own `docs/specs/**` untouched — this kit only ever supplies skills, guides, and
+  templates, never app content.

@@ -1,10 +1,17 @@
-# ai-sdd-kit
+# SAGE — Spec-as-Governance Engine
 
-Shared, AI-vendor-agnostic Spec-Driven Development (SDD) workflow kit for Maru apps.
+Shared, AI-vendor-agnostic **Discovery-phase** workflow kit for Maru apps.
 
-The methodology spine is **SDD**; the **Discovery-to-Delivery (D2D)** pipeline is its
-discovery phase. This kit holds the **agnostic core** — guides, templates, and all pipeline
-skills — that every app consumes. Vendor shells live in each app.
+SAGE is a two-phase methodology: **Discovery** (human-approved architecture, ADRs, and
+scope of work) and **Delivery** (AI-generated tickets, code, and tests, gated by a
+deterministic CI audit). This repository ships the **Discovery phase and its governance
+conventions only** — guides, templates, and all Discovery-pipeline skills, consumed
+identically by every app.
+
+**Delivery-phase enforcement (the `spec:*` block schema, the CI audit, test generation)
+is implemented per app, behind an adapter contract, and is not shipped here.** Glue
+(`apps/quest-ic/glue`) is the reference implementation of that adapter — see
+`docs/specs/testing/architecture.md` there for its concrete 9-check audit toolchain.
 
 ## Progressive enhancement contract
 
@@ -17,7 +24,7 @@ for heavy parsing (OpenAPI, Figma, codebase); other shells are minor ergonomics.
 ## Contents
 
 ```
-ai-sdd-kit/
+sage/
 ├── guides/
 │   ├── source-of-truth-precedence.md   # live API > codebase > PRD
 │   └── estimation-heuristics.md        # AI-assist factors, complexity, parallel timeline
@@ -40,7 +47,7 @@ ai-sdd-kit/
 
 | Layer | Lives | Examples |
 |---|---|---|
-| **Core** (this kit) | `ai-sdd-kit` | All pipeline skills, guides, templates |
+| **Core** (this kit) | `sage` | All Discovery-pipeline skills, guides, templates |
 | **Vendor shells** | each app's `.opencode/`, `.claude/`, `.github/` | thin, optional, on-demand efficiency wrappers over skills |
 
 App-specific Jira conventions (project keys, component names, epic keys) are inputs to the
@@ -48,19 +55,23 @@ skills at runtime — not hardcoded in the skills themselves.
 
 ## How an app consumes the kit
 
-Mount the kit into the app at `.agents/skills/_shared/` via git submodule (preferred) or
-symlink. The agent discovers all skills under `_shared/skills/` automatically.
+Mount the kit into the app at `.agents/skills/_shared/` as a **pinned git submodule** —
+this is the standard, committable way every app consumes SAGE. The agent discovers all
+skills under `_shared/skills/` automatically.
 
 ```bash
-# git submodule (run from the app repo root)
-git submodule add <ai-sdd-kit-remote-url> .agents/skills/_shared
-git commit -m "Add ai-sdd-kit shared SDD workflow"
-
-# OR local symlink (dev-only, not committed)
-ln -s ../../../../libs/ai-sdd-kit .agents/skills/_shared
+# git submodule (run from the app repo root), pinned to a released tag
+git submodule add git@github.com:maksym-shaiev/sage.git .agents/skills/_shared
+cd .agents/skills/_shared && git checkout v0.1.0 && cd -
+git add .gitmodules .agents/skills/_shared
+git commit -m "Add SAGE (Discovery phase) as a pinned submodule"
 ```
 
-See `INSTALL.md` for the full handoff (creating the remote repo + wiring the first app).
+A local symlink (`ln -s <path-to>/libs/sage .agents/skills/_shared`) is acceptable for
+solo, uncommitted dev-loop iteration only — it cannot be shared with another developer
+or committed, and both reference apps (Glue, Kato) use the submodule form.
+
+See `INSTALL.md` for the full handoff.
 
 ## The SDD pipeline
 
@@ -76,15 +87,20 @@ discover-prd (core)
               → [stakeholder-update — planned] → Jira comment + VP email
 ```
 
-Planned additions: `figma-inventory`, `stakeholder-update` (see
-`apps/quest-ic/glue/docs/specs/process/ai-sdd-workflow-plan.md`).
+Planned additions: `figma-inventory`, `stakeholder-update`.
 
 ## Status
 
-All five pipeline skills are implemented and app-agnostic. Extracted from the QuestIC
-reference runs (QIMS epic QW-616, Survey Reminders epic QW-746, Activities V2 epic QW-796).
+All six pipeline skills (`discover-prd`, `api-contract-extractor`, `gap-analyzer`,
+`adr-writer`, `scope-mapper`, `jira-backlog-builder`) are implemented and app-agnostic.
+Informed by three QuestIC Discovery runs (QIMS epic QW-616, Survey Reminders epic
+QW-746, Activities V2 epic QW-796) — those runs predate this kit's conventions and are
+**historical examples, not conformant reference output**; see each skill's `## See Also`
+for the distinction and for the conformant synthetic reference set.
 
 ## Reference implementation
 
-`apps/quest-ic/glue/docs/specs/incentives/` — the specs, scope of work, ADRs, and 39 Jira
-tasks produced by a reference run of this pipeline.
+Glue (`apps/quest-ic/glue`) is the reference implementation of the Delivery-side
+adapter contract (`docs/specs/testing/architecture.md`) and was the origin of this
+kit's conventions. `apps/quest-ic/glue/docs/specs/incentives/` holds one historical
+Discovery run (QIMS, pre-dates the current skill conventions).
