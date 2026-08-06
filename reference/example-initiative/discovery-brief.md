@@ -84,4 +84,5 @@ version of this brief.
 
 - `widget-api-contract.md` — the verified/proposed contract referenced above
 - `decisions/ADR-001-dedicated-favorite-entity.md` — resolves OQ-004
+- `architecture.md` — the architecture spec built on this brief and its ADR
 - `scope-of-work.md` — the scope items this brief hands off to

@@ -32,7 +32,7 @@ stale shell loses only the efficiency gain, never correctness.
 |---|---|---|---|
 | Skill (`SKILL.md`) | `.agents/skills/<n>/SKILL.md` or `.opencode/skill` (native) | `.claude/skills/<n>` (native Agent Skill) | `.github/` instructions/prompt file (closest; no native skill) |
 | Command | `.opencode/command/<n>.md` (`/n`) | `.claude/commands/<n>.md` (`/n`) | `.github/prompts/<n>.prompt.md` |
-| Subagent (context isolation) | `.opencode/agent/<n>.md` + built-in `explore` | `.claude/agents/<n>.md` | none — degrade to prompt + MCP |
+| Subagent (context isolation) | `.opencode/agents/<n>.md` + built-in `explore` | `.claude/agents/<n>.md` | none — degrade to prompt + MCP |
 | MCP integration | `opencode.json` `mcp` block | `.mcp.json` | VS Code `mcp.json` / Copilot MCP |
 
 Notes:
@@ -71,7 +71,7 @@ Copilot (`.github/prompts/<name>.prompt.md`): same body minus subagent delegatio
 Use **only** for context isolation on heavy reads or large bulk ops. The subagent loads the
 skill and runs it in a child context, returning a distilled result.
 
-opencode (`.opencode/agent/<name>.md`):
+opencode (`.opencode/agents/<name>.md`):
 ```markdown
 ---
 description: Runs the <skill> skill in isolation for context efficiency
@@ -83,6 +83,21 @@ not raw intermediate output.
 
 Prefer reusing the **built-in `explore`** subagent for research reads rather than authoring
 a custom one — it already provides read isolation.
+
+### Primary-agent shell — `discovery-lead`
+
+`discovery-lead` (the Discovery orchestrator) is the one skill this kit ships a ready-made
+agent shell for, because it's the natural `@`-mention entry point for a whole initiative —
+see `vendor-shells/`:
+
+| Vendor | Shell | Mechanism |
+|---|---|---|
+| opencode | `vendor-shells/opencode/opencode.json.example` (preferred) or `vendor-shells/opencode/discovery-lead.md` | JSON form uses `{file:...}` — zero duplication. Markdown form is a pointer body. |
+| Claude Code | `vendor-shells/claude-code/discovery-lead.md` | Pointer body only — Claude Code markdown agents have no `{file:...}` equivalent, and don't auto-discover `.agents/skills/` (see that shell's own note) |
+| Copilot | none shipped | No subagent concept; build a prompt-file shell on demand if a team needs one (see Capability mapping above) |
+
+Copy, don't hand-write — see `INSTALL.md` § 4 and each `vendor-shells/<vendor>/README.md`
+for setup steps. None of the other seven skills ship a shell; invoke them by name.
 
 ### Worked example — `discover-prd`
 
@@ -105,3 +120,5 @@ shell has logic it shouldn't — move it back into the skill.
 
 - `README.md` — kit overview and consumption
 - `skills/` — the core skills shells wrap
+- `vendor-shells/` — the one ready-made shell (`discovery-lead`), canonical and versioned
+- `INSTALL.md` § 4 — setup steps for the `discovery-lead` agent shell

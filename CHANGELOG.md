@@ -41,3 +41,37 @@ carry this history; this file does.
   a pre-existing bug found in Glue's file in the same pass: a stray, truncated
   duplicate of rule 5 (Post-Change Spec Obligation) sitting between the Local AI
   skills table and the Quick Reference section.
+
+### `architecture-writer` and `discovery-lead` added; Article V reconciled against real prior art
+
+- **Kato's `sage-delivery` skill (Step 1) was the closest existing thing to an
+  architecture-writing skill** — but audited against Article V's 8-point completeness
+  criterion, it covered only 5 of 8: no `## Integration Points` (with owning lane), no
+  `## Auth Model`, and no `## Failure Modes` sections existed anywhere in its required
+  section list. Its Mermaid template also hard-coded `Kato REST API`/`PostgreSQL` as
+  participant names — the same category of app-specific leakage fixed elsewhere in this
+  kit (see the constitution's Article VI cleanup and `be-task.md`'s genericisation).
+  `architecture-writer` reconciles rather than copies: keeps what Step 1 got right
+  (reading the topology doc before drawing, the metadata header shape, requiring a
+  sequence diagram per flow) and adds the 3 missing sections plus a genericised
+  template.
+- **`discovery-lead` orchestrates `discover-prd` → `adr-writer` →
+  `architecture-writer` → `scope-mapper`** as a single entry point, with an explicit
+  ownership boundary between itself (ADRs for brief-flagged decisions) and
+  `scope-mapper`'s own Step 3b (ADRs surfacing only during scoping) — the two do not
+  compete for the same decisions. Its Handoff Criteria self-check covers the *complete*
+  four-artifact set (cross-artifact consistency: ADR↔scope-item back-links, lane
+  agreement between architecture and scope, no orphaned proposed endpoints), which no
+  single skill could check in isolation.
+- **`reference/example-initiative/` gained `architecture.md`**, closing a gap the set's
+  own README had explicitly flagged as deliberately omitted one phase earlier. It
+  demonstrates all 8 Article V dimensions, including one explicit `N/A` (no cross-repo
+  integration applies to this single-service toy initiative) — the point being that D8
+  requires *stating* non-applicability, not that every dimension must be substantial.
+- **Vendor shells for `discovery-lead` ship in `vendor-shells/`, not as prose recipes.**
+  OpenCode's `{file:...}` prompt reference achieves genuine zero-duplication; Claude
+  Code has no equivalent (a markdown agent's body *is* its prompt) and additionally does
+  not discover skills from `.agents/skills/` at all, so its shell also carries an
+  explicit workaround note and an optional symlink recipe. This is the one skill in the
+  kit with a shipped shell — the other seven are invoked by name, per
+  `vendor-tooling-guide.md`'s "generate on demand" principle.

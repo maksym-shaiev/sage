@@ -1,0 +1,10 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "discovery-lead": {
+      "description": "SAGE Discovery phase orchestrator — architecture, ADRs, and scope of work from a raw PRD, gated by human approval before any code is written.",
+      "mode": "primary",
+      "prompt": "{file:./.agents/skills/_shared/skills/discovery-lead/SKILL.md}"
+    }
+  }
+}

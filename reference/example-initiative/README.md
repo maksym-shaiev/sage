@@ -23,22 +23,16 @@ sitting.
 | A decision graduating to a **full ADR** with `Decided-by`, `Decided-on`, `Triggered-by`, and rejected alternatives named (D4) | OQ-004 → `decisions/ADR-001-dedicated-favorite-entity.md` |
 | Contract-level provenance via `status`: `existing`, `extension`, `new`, and `internal` | `widget-api-contract.md` |
 | The Discovery Gate passing with **zero** entries left in the raw Assumed state (D7) | `discovery-brief.md` Decisions & Assumptions Register, final state |
-| `ITEM-NN` scope-item IDs with an explicit `Lane:` field (not lane-prefixed IDs) | `scope-of-work.md` |
-| A scope item's `**Decision:**` field back-linking to its governing ADR | `ITEM-04` in `scope-of-work.md` |
-| Architecture completeness criterion (Article V) — see the Limitations note below | *(not included — see below)* |
-
-## What it deliberately omits
-
-This reference set does not include a full architecture spec (Article V's 8-point
-criterion). Building one for a 4-item toy initiative would be disproportionate to what
-it needs to demonstrate — the register, gate, ADR, and contract-provenance mechanics
-above do not depend on it. A future pass may add a minimal one; until then, Article V
-compliance should be checked against the constitution's own text, not this set.
+| `ITEM-NN` scope-item IDs with an explicit `**Lanes:**` field (not lane-prefixed IDs) | `scope-of-work.md` |
+| A scope item's `**Decision:**` field back-linking to its governing ADR, in **both** directions (ADR's See Also links back too) | `ITEM-01`, `ITEM-02` ↔ `decisions/ADR-001-dedicated-favorite-entity.md` |
+| Architecture completeness criterion (Article V) — all 8 dimensions, including one section explicitly stating no cross-repo dimension applies rather than omitting it (D8) | `architecture.md` |
 
 ## Files
 
 - `discovery-brief.md` — `discover-prd`'s output, human-approved
-- `widget-api-contract.md` — `api-contract-extractor`'s output (design mode — the
-  initiative is mostly new-endpoint work, not a pure vendor-integration)
+- `widget-api-contract.md` — `api-contract-extractor`'s output (mixed Extract Mode +
+  Design Mode — the initiative is mostly new-endpoint work, not a pure vendor
+  integration; see its Overview for which mode produced which endpoint)
 - `decisions/ADR-001-dedicated-favorite-entity.md` — `adr-writer`'s output
+- `architecture.md` — `architecture-writer`'s output, satisfying Article V
 - `scope-of-work.md` — `scope-mapper`'s output, ready for `jira-backlog-builder`

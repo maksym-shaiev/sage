@@ -28,7 +28,7 @@ every repo that mounts this kit. It has two parts:
   human-approval gate mechanically requires that record to be empty of unresolved
   assumptions before it can pass.
 
-All six skills below load this constitution and reference the specific articles they
+All eight skills below load this constitution and reference the specific articles they
 implement.
 
 ## Progressive enhancement contract
@@ -58,14 +58,24 @@ sage/
 │   └── vp-email.md  jira-comment.md    # stakeholder comms
 │   (scope-of-work items use scope-mapper's own inline template — see that skill)
 ├── skills/                             # ALL pipeline skills (app-agnostic)
+│   ├── discovery-lead/                 # orchestrates the whole Discovery phase end to
+│   │                                    # end (the four skills below, in order) — the
+│   │                                    # single entry point; has an optional agent shell
 │   ├── discover-prd/                   # orchestrate discovery: PRD + API + Figma + gaps → brief + ADR candidates
-│   ├── api-contract-extractor/         # live OpenAPI → verified contract, status-tagged
+│   ├── api-contract-extractor/         # live OpenAPI → verified contract, status-tagged;
+│   │                                    # Extract Mode + Design Mode
 │   ├── gap-analyzer/                   # PRD vs contract → coverage table + open questions
 │   ├── adr-writer/                     # produce ADRs for any significant decision (technical, product, integration, config)
+│   ├── architecture-writer/            # feature architecture spec — Article V's 8-point
+│   │                                    # completeness criterion (component map, integration
+│   │                                    # points + owning lane, auth model, failure modes, ...)
 │   ├── scope-mapper/                   # requirements + contract + Figma → scope-of-work spec (creates ADRs first)
 │   └── jira-backlog-builder/           # scope of work → [BE]+[FE] Jira tasks (one-pair-then-confirm)
 ├── reference/example-initiative/       # small, synthetic, fully conformant example of
 │                                        # every skill's output — see its own README.md
+├── vendor-shells/                      # ready-made, versioned agent shells (currently:
+│   ├── opencode/                       # discovery-lead only — see INSTALL.md § 4)
+│   └── claude-code/
 └── vendor-tooling-guide.md             # how to generate vendor shells from core skills
 ```
 
@@ -74,7 +84,8 @@ sage/
 | Layer | Lives | Examples |
 |---|---|---|
 | **Core** (this kit) | `sage` | All Discovery-pipeline skills, guides, templates, the constitution |
-| **Vendor shells** | each app's `.opencode/`, `.claude/`, `.github/` | thin, optional, on-demand efficiency wrappers over skills |
+| **Canonical vendor shells** | `sage/vendor-shells/` | The one ready-made shell (`discovery-lead`'s agent) — versioned, copied into an app, never hand-written per app |
+| **App-local vendor shells** | each app's `.opencode/`, `.claude/`, `.github/` | thin, optional, on-demand efficiency wrappers over the other skills — generate per `vendor-tooling-guide.md` when a team needs one |
 
 App-specific Jira conventions (project keys, component names, epic keys) are inputs to the
 skills at runtime — not hardcoded in the skills themselves.
@@ -97,36 +108,50 @@ A local symlink (`ln -s <path-to>/libs/sage .agents/skills/_shared`) is acceptab
 solo, uncommitted dev-loop iteration only — it cannot be shared with another developer
 or committed, and both reference apps (Glue, Kato) use the submodule form.
 
-See `INSTALL.md` for the full handoff.
+See `INSTALL.md` for the full handoff, including § 4 for configuring the optional
+`discovery-lead` agent shell on OpenCode CLI and Claude Code CLI.
 
 ## The SDD pipeline
 
 ```
-discover-prd (core)
-  → api-contract-extractor (core) ──┐
-  → [figma-inventory — planned]     ├─ Discovery Brief + ADR candidates
-  → gap-analyzer (core) ────────────┘
-      → adr-writer (core) → ADR(s) for flagged candidates
-      → scope-mapper (core) → scope-of-work spec (ADRs written first, then scope items)
-          → [human approval]
-          → jira-backlog-builder (core) → [BE]+[FE] tasks (one-pair-then-confirm)
-              → [stakeholder-update — planned] → Jira comment + VP email
+discovery-lead (core) — orchestrates the four skills below end to end
+  discover-prd (core)
+    → api-contract-extractor (core) ──┐
+    → [figma-inventory — planned]     ├─ Discovery Brief + ADR candidates
+    → gap-analyzer (core) ────────────┘
+        → [human approval — Article IV / D7]
+        → adr-writer (core) → ADR(s) for brief-flagged candidates
+        → architecture-writer (core) → architecture spec (Article V)
+            ⟲ new decision surfaced → back to adr-writer, then resume
+        → scope-mapper (core) → scope-of-work spec (late ADRs via its own Step 3b)
+            → [Handoff Criteria self-check — discovery-lead Step 5]
+            → jira-backlog-builder (core) → [BE]+[FE] tasks (one-pair-then-confirm)
+                → [stakeholder-update — planned] → Jira comment + VP email
 ```
 
 Planned additions: `figma-inventory`, `stakeholder-update`.
 
 ## Status
 
-All six pipeline skills (`discover-prd`, `api-contract-extractor`, `gap-analyzer`,
-`adr-writer`, `scope-mapper`, `jira-backlog-builder`) are implemented and app-agnostic,
-and now carry a `## Governance` preamble binding them to the SAGE Constitution
-(`constitution/SAGE-CONSTITUTION.md`). Informed by three QuestIC Discovery runs (QIMS
-epic QW-616, Survey Reminders epic QW-746, Activities V2 epic QW-796) — those runs
-predate this kit's conventions (no `Subtype`/`Triggered-by`/`Decided-by` on their ADRs,
-no Decisions & Assumptions Register) and are **historical examples, not conformant
-reference output**. A conformant synthetic reference set is planned but not yet
-present — see `adr-writer`'s "Reference ADRs" table for the current (pre-cleanup) state
-of that gap. No tag has been cut yet; consuming repos currently pin to a commit SHA.
+All eight pipeline skills (`discovery-lead`, `discover-prd`, `api-contract-extractor`,
+`gap-analyzer`, `adr-writer`, `architecture-writer`, `scope-mapper`,
+`jira-backlog-builder`) are implemented, app-agnostic, and carry a `## Governance`
+preamble binding them to the SAGE Constitution (`constitution/SAGE-CONSTITUTION.md`).
+
+`reference/example-initiative/` is a small, synthetic, **fully conformant** example
+covering all four artifacts `discovery-lead` produces (brief, ADR, architecture, scope)
+— demonstrating every rule in the constitution end to end, including all 8 of Article
+V's architecture dimensions. It is the canonical reference every skill's `See Also`
+points to.
+
+The three historical QuestIC Discovery runs (QIMS epic QW-616, Survey Reminders epic
+QW-746, Activities V2 epic QW-796) predate this kit's conventions (no
+`Subtype`/`Triggered-by`/`Decided-by` on their ADRs, no Decisions & Assumptions
+Register, no architecture spec satisfying Article V) and are marked **historical
+examples, not conformant reference output** everywhere a skill cites one — see
+`adr-writer`'s "Historical examples" table for the specifics.
+
+No tag has been cut yet; consuming repos currently pin to a commit SHA.
 
 ## Reference implementation
 

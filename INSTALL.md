@@ -1,9 +1,10 @@
 # SAGE — Install & Handoff
 
 This kit is published at `git@github.com:maksym-shaiev/sage.git`. It ships the
-**Discovery phase only** — guides, templates, and all six Discovery-pipeline skills.
-Delivery-phase enforcement (spec schema, CI audit, test generation) is per-app and not
-part of this kit; see `README.md`.
+**Discovery phase only** — guides, templates, and all eight Discovery-pipeline skills
+(the six original skills plus `architecture-writer` and the `discovery-lead`
+orchestrator). Delivery-phase enforcement (spec schema, CI audit, test generation) is
+per-app and not part of this kit; see `README.md`.
 
 ## 1. Wire into an app as a submodule (the standard way — required for committed work)
 
@@ -41,12 +42,52 @@ ln -s <absolute-or-relative-path-to>/libs/sage .agents/skills/_shared
 
 ## 3. Verify
 
-- The agent (or `ls .agents/skills/_shared/skills/`) lists all six skills:
-  `discover-prd`, `api-contract-extractor`, `gap-analyzer`, `adr-writer`, `scope-mapper`,
-  `jira-backlog-builder`.
+- The agent (or `ls .agents/skills/_shared/skills/`) lists all eight skills:
+  `discover-prd`, `api-contract-extractor`, `gap-analyzer`, `adr-writer`,
+  `architecture-writer`, `scope-mapper`, `jira-backlog-builder`, `discovery-lead`.
 - No app should keep a local copy of a core skill — core skills are consumed only
   through `_shared`. If an app-local skill directory shares a name with a core skill,
   remove the local copy; the shared one supersedes it.
+
+## 4. Configuring the discovery-lead agent (optional)
+
+`discovery-lead` works as a plain skill with no agent configuration at all — invoke it
+by name on any vendor that discovers skills from `.agents/skills/_shared/skills/`, and
+it sequences `discover-prd` → `adr-writer` → `architecture-writer` → `scope-mapper` per
+its own `SKILL.md`. An agent shell on top of it adds an `@`-mention entry point and an
+isolated context window; it adds no capability the skill doesn't already have. Canonical
+shell text ships in `vendor-shells/` so it travels with the submodule pin — copy it in
+rather than hand-writing your own.
+
+### OpenCode CLI
+
+Skills are auto-discovered from `.agents/skills/**` — nothing extra is needed for the
+skill itself; verify with `ls .agents/skills/_shared/skills/`.
+
+For the optional agent, see `vendor-shells/opencode/README.md` for both setup options
+(a `{file:...}`-referencing `opencode.json` block with zero duplication, or a
+`.opencode/agents/discovery-lead.md` pointer file). Once configured:
+
+```bash
+opencode          # then Tab to cycle to discovery-lead, or @discovery-lead to mention it
+```
+
+### Claude Code CLI
+
+Claude Code discovers skills from `.claude/skills/`, **not** `.agents/skills/` — the
+eight SAGE skills are not auto-discovered. See `vendor-shells/claude-code/README.md`:
+
+1. Copy `vendor-shells/claude-code/discovery-lead.md` into `.claude/agents/` (project)
+   or `~/.claude/agents/` (personal). Restart Claude Code if `.claude/agents/` did not
+   already exist in this session.
+2. Optionally symlink the eight kit skills into `.claude/skills/` (instructions in that
+   README) so Claude's native `Skill` tool can find them too — without this, the shell's
+   pointer body instructs Claude to `Read` each `SKILL.md` by path instead, which works
+   but doesn't benefit from Claude's skill-preloading.
+
+```text
+Use the discovery-lead agent to start Discovery for this initiative: <PRD link>
+```
 
 ## Current state
 

@@ -137,4 +137,5 @@ Total = sum of phase durations + 20% buffer = 3.5 × 1.2 ≈ **4.2 days**.
 
 - `discovery-brief.md` — the approved Discovery Brief this scope was mapped from
 - `widget-api-contract.md` — the contract referenced in every item above
+- `architecture.md` — the architecture spec this scope implements
 - `decisions/ADR-001-dedicated-favorite-entity.md` — governs ITEM-01, ITEM-02
