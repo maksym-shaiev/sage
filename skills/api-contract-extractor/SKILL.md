@@ -9,6 +9,15 @@ metadata:
   layer: core
 ---
 
+## Governance
+
+This skill operates under the [SAGE Constitution](../../constitution/SAGE-CONSTITUTION.md).
+**D5 (no invented identifiers)** and **D6 (source-of-truth precedence: live API >
+codebase > PRD)** govern this skill directly. Every endpoint this skill emits carries a
+`status` tag (Article III, contract-level provenance) — `existing`/`extension` only
+after being Verified against a live response or the codebase; `new` marked
+Confirmed-as-proposed, never presented as already existing.
+
 ## What I do
 
 Extract an authoritative API contract from the live OpenAPI spec (or codebase), and emit a

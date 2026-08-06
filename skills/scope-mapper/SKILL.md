@@ -9,6 +9,15 @@ metadata:
   layer: core
 ---
 
+## Governance
+
+This skill operates under the [SAGE Constitution](../../constitution/SAGE-CONSTITUTION.md).
+**D7 (the Discovery Gate requires an empty Assumed register) is a hard stop** applied
+here: this skill may not run against a Discovery Brief whose Decisions & Assumptions
+Register still contains Assumed entries — those either graduate to Confirmed (via
+`adr-writer` or an inline decision) before scoping, or the requirement they concern is
+scoped as Blocked, never silently included.
+
 ## What I do
 
 Transform an approved Discovery Brief into a phased scope-of-work spec. Each PRD

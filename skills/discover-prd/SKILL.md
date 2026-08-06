@@ -9,6 +9,15 @@ metadata:
   layer: core
 ---
 
+## Governance
+
+This skill operates under the [SAGE Constitution](../../constitution/SAGE-CONSTITUTION.md).
+Discovery rules D1–D8 apply; **D1, D2, and D7 are hard stops** — halt and resolve with
+the human before proceeding rather than guessing past them. Every claim written into
+the Discovery Brief carries a provenance marker (Article III: Verified / Confirmed) or
+is lifted into the Decisions & Assumptions Register as Assumed/Open — never written as
+settled fact with neither.
+
 ## What I do
 
 Orchestrate the full SDD discovery pipeline from raw inputs (PRD, API, Figma) to an
@@ -127,22 +136,44 @@ Reference: {path to gap report or inline if short}
 ## Open Questions
 {OQ-NNN table with risk level, owning team, status}
 
+## Decisions & Assumptions Register
+{Per SAGE Constitution Article III. One row per open question or pending decision:}
+
+| ID | Statement | State | Evidence / Decided-by (+date) | Blocks | Resolution |
+|---|---|---|---|---|---|
+| OQ-001 | {claim or gap} | Assumed → Open | — | {ITEM-ID or "—"} | pending |
+| OQ-002 | {claim} | Confirmed | {name/role} — {date} | — | inline (no ADR) |
+
+{Every row MUST be Verified, Confirmed, or Open-and-blocking. Zero rows may remain
+Assumed with nothing blocking them at the time this brief is presented for approval —
+see Step 6.}
+
 ## Handoff note
-Ready for scope-mapper once open questions are resolved or risk is accepted.
+Ready for scope-mapper once every register entry is Verified, Confirmed, or
+Open-and-blocking (D7). {Approved by: {name}, {date}, against this version.}
 ```
 
 Save to `docs/specs/{domain}/discovery-brief.md` (or agreed path).
 
 ### Step 6 — Human gate
 
-Present the Discovery Brief. Do NOT proceed to `scope-mapper` until the human
-explicitly approves. Record which High-risk open questions are accepted vs. pending.
+Present the Discovery Brief. Before presenting, verify the Decisions & Assumptions
+Register: every entry is Verified, Confirmed, or explicitly Open-and-blocking its scope
+item (Article IV, condition 1–2). If any entry is Assumed with nothing blocking it,
+this is a **hard stop (D7)** — resolve it (evidence, a human decision, or an explicit
+block) before presenting.
+
+Do NOT proceed to `scope-mapper` until the human explicitly approves. Record the
+approval directly in the Handoff note: who approved, on what date, against which
+version of this brief.
 
 ## Refuse conditions
 
 - PRD URL or doc is not accessible — ask the human to provide it
 - No live OpenAPI URL and no codebase path — cannot verify the contract; halt and request
-- Human gate not passed — do not invoke `scope-mapper` without explicit approval
+- The Decisions & Assumptions Register contains an Assumed entry with nothing blocking
+  it — hard stop (D7); resolve before presenting for approval
+- Human gate not passed — do not invoke `scope-mapper` without explicit, recorded approval
 
 ## Output
 
@@ -150,6 +181,9 @@ explicitly approves. Record which High-risk open questions are accepted vs. pend
 
 ## See Also
 
+- `constitution/SAGE-CONSTITUTION.md` — Article II (Discovery rules), Article III
+  (provenance model + Decisions & Assumptions Register), Article IV (the gate this
+  skill's Step 6 implements)
 - `skills/api-contract-extractor/SKILL.md` — Step 2
 - `skills/gap-analyzer/SKILL.md` — Step 4
 - `skills/scope-mapper/SKILL.md` — next step after human gate

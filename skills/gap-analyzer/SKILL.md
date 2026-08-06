@@ -9,6 +9,15 @@ metadata:
   layer: core
 ---
 
+## Governance
+
+This skill operates under the [SAGE Constitution](../../constitution/SAGE-CONSTITUTION.md).
+**D2 (ambiguity → open question, never a plausible default) is a hard stop.** A gap
+between the PRD and the contract is a finding to be recorded, not a decision this skill
+makes on its own — every open question it produces feeds the Decisions & Assumptions
+Register (Article III) and must carry risk level, owner, and evidence; none may be
+resolved silently.
+
 ## What I do
 
 Compare what the PRD requires against what the verified contract provides, and produce a

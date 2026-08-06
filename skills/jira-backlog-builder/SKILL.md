@@ -9,6 +9,15 @@ metadata:
   layer: core
 ---
 
+## Governance
+
+This skill operates under the [SAGE Constitution](../../constitution/SAGE-CONSTITUTION.md).
+It runs after the Discovery Gate (Article IV) has passed — it does not re-check the
+Decisions & Assumptions Register itself, and relies on `scope-mapper` having already
+enforced D7. **D5 (no invented identifiers)** applies to every Jira field this skill
+sets — project keys, component names, and labels must come from the scope-of-work
+spec's own header or be confirmed by the human, never guessed.
+
 ## What I do
 
 Turn an approved scope-of-work spec into Jira tasks. Creates paired `[BE]` + `[FE]` tasks

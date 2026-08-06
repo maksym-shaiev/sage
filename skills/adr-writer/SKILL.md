@@ -9,6 +9,14 @@ metadata:
   layer: core
 ---
 
+## Governance
+
+This skill operates under the [SAGE Constitution](../../constitution/SAGE-CONSTITUTION.md).
+It is the primary implementation of **D4 (every decision carries Decided-by, Decided-on,
+and what it was decided against)** — every ADR this skill produces is a Confirmed entry
+in the Decisions & Assumptions Register (Article III), and must record the decider, the
+date, and the rejected alternative(s), not just the chosen option.
+
 ## What I do
 
 Produce a well-structured ADR for every significant decision encountered during Discovery
@@ -61,8 +69,15 @@ Status: Draft | Accepted | Superseded
 Updated: {today YYYY-MM-DD}
 Description: Why {approach X} was chosen over {approach Y} for {initiative/feature}.
 Triggered-by: {OQ-NNN | "PRD conflict" | "discovery gap" | "PO escalation" — omit if not from a gap report}
+Decided-by: {name and role of the person who made the call, e.g. "Jane Doe, Product Owner"}
+Decided-on: {YYYY-MM-DD the decision was made — may differ from Updated}
 ---
 ```
+
+`Decided-by` and `Decided-on` implement SAGE Constitution D4 (every decision carries who
+decided, when, and what it was decided against). Both are mandatory — this ADR *is* the
+Confirmed entry in the Decisions & Assumptions Register (Article III); without a named
+decider and date it cannot be distinguished from an Assumed claim the agent wrote itself.
 
 ## Required sections
 
@@ -107,15 +122,19 @@ or data model as evidence — not opinion.
 
 ### Decision
 
-State the chosen option explicitly. Then explain why — one paragraph.
+State the chosen option explicitly. Then explain why — one paragraph. Explicitly name
+which option(s) were rejected and why, even briefly — a decision record that only
+justifies the winner does not satisfy D4.
 
 For product decisions: quote the PO or decision-maker directly if available, with name
-and date. Example:
+and date — this quote is the evidence behind the `Decided-by`/`Decided-on` header
+fields, not a separate flourish. Example:
 > *"Fundamentally we use what we have in sendouts, no big rewrite."*
 > — Product Owner, 2026-06-26
 
 For technical decisions: state the technical rationale (fewer hops, single source of
-truth, fewer runtime dependencies, consistent with established pattern).
+truth, fewer runtime dependencies, consistent with established pattern) and name the
+option(s) it beat.
 
 ### Consequences
 
@@ -168,6 +187,9 @@ Every ADR that governs a scope item must be cross-referenced in both directions:
 ## Quality checks before finalising
 
 - [ ] Options table has ≥ 2 rows with real trade-offs — not a foregone conclusion
+- [ ] `Decided-by` and `Decided-on` are populated with a real name/role and date (D4) —
+      never left as a placeholder or inferred by the agent
+- [ ] Decision section names the rejected alternative(s), not only the winner (D4)
 - [ ] Decision cites authority (PO name + date, or technical evidence from API/codebase)
 - [ ] Every PRD or mock impact is explicitly flagged as "PRD/mock adjustment required"
 - [ ] Triggered-by field references the OQ-NNN or gap that prompted this decision
@@ -188,6 +210,8 @@ These are the canonical examples to follow:
 
 ## See Also
 
+- `constitution/SAGE-CONSTITUTION.md` — Article II (D4: decision provenance), Article
+  III (this ADR is the Confirmed entry graduating an Assumed/Open register row)
 - `skills/discover-prd/SKILL.md` — Step 4b surfaces ADR candidates during Discovery
 - `skills/scope-mapper/SKILL.md` — Step 3b creates ADRs for flagged candidates
 - `templates/open-question.md` — OQ format; OQ-NNN → ADR is the standard resolution path

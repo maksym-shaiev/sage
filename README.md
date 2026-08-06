@@ -13,6 +13,24 @@ is implemented per app, behind an adapter contract, and is not shipped here.** G
 (`apps/quest-ic/glue`) is the reference implementation of that adapter — see
 `docs/specs/testing/architecture.md` there for its concrete 9-check audit toolchain.
 
+## Governance
+
+`constitution/SAGE-CONSTITUTION.md` is the single, versioned source of governance for
+every repo that mounts this kit. It has two parts:
+
+- **Article I — Universal Governance**, extracted from the rules Glue and Kato had each
+  independently written (and had already begun to drift from each other — see the
+  constitution's Article VI for the drift this fixed). A consuming repo's `AGENTS.md`
+  states the rule headlines and points here for full text, instead of duplicating it.
+- **Article II — Discovery Governance**, new rules (D1-D8) governing how AI agents may
+  write Discovery artifacts: no unconfirmed claim may be written as settled fact, every
+  gap becomes a recorded open question rather than a silent default, and the
+  human-approval gate mechanically requires that record to be empty of unresolved
+  assumptions before it can pass.
+
+All six skills below load this constitution and reference the specific articles they
+implement.
+
 ## Progressive enhancement contract
 
 The agnostic core always produces correct results. Vendor-specific tools (opencode
@@ -25,6 +43,10 @@ for heavy parsing (OpenAPI, Figma, codebase); other shells are minor ergonomics.
 
 ```
 sage/
+├── constitution/
+│   └── SAGE-CONSTITUTION.md            # governance: universal rules (G1-G5), Discovery
+│                                        # rules (D1-D8), provenance model, the gate,
+│                                        # architecture completeness, extension slots
 ├── guides/
 │   ├── source-of-truth-precedence.md   # live API > codebase > PRD
 │   └── estimation-heuristics.md        # AI-assist factors, complexity, parallel timeline
@@ -47,7 +69,7 @@ sage/
 
 | Layer | Lives | Examples |
 |---|---|---|
-| **Core** (this kit) | `sage` | All Discovery-pipeline skills, guides, templates |
+| **Core** (this kit) | `sage` | All Discovery-pipeline skills, guides, templates, the constitution |
 | **Vendor shells** | each app's `.opencode/`, `.claude/`, `.github/` | thin, optional, on-demand efficiency wrappers over skills |
 
 App-specific Jira conventions (project keys, component names, epic keys) are inputs to the
@@ -62,7 +84,7 @@ skills under `_shared/skills/` automatically.
 ```bash
 # git submodule (run from the app repo root), pinned to a released tag
 git submodule add git@github.com:maksym-shaiev/sage.git .agents/skills/_shared
-cd .agents/skills/_shared && git checkout v0.1.0 && cd -
+cd .agents/skills/_shared && git checkout <tag> && cd -   # no tag cut yet — see Status
 git add .gitmodules .agents/skills/_shared
 git commit -m "Add SAGE (Discovery phase) as a pinned submodule"
 ```
@@ -92,11 +114,15 @@ Planned additions: `figma-inventory`, `stakeholder-update`.
 ## Status
 
 All six pipeline skills (`discover-prd`, `api-contract-extractor`, `gap-analyzer`,
-`adr-writer`, `scope-mapper`, `jira-backlog-builder`) are implemented and app-agnostic.
-Informed by three QuestIC Discovery runs (QIMS epic QW-616, Survey Reminders epic
-QW-746, Activities V2 epic QW-796) — those runs predate this kit's conventions and are
-**historical examples, not conformant reference output**; see each skill's `## See Also`
-for the distinction and for the conformant synthetic reference set.
+`adr-writer`, `scope-mapper`, `jira-backlog-builder`) are implemented and app-agnostic,
+and now carry a `## Governance` preamble binding them to the SAGE Constitution
+(`constitution/SAGE-CONSTITUTION.md`). Informed by three QuestIC Discovery runs (QIMS
+epic QW-616, Survey Reminders epic QW-746, Activities V2 epic QW-796) — those runs
+predate this kit's conventions (no `Subtype`/`Triggered-by`/`Decided-by` on their ADRs,
+no Decisions & Assumptions Register) and are **historical examples, not conformant
+reference output**. A conformant synthetic reference set is planned but not yet
+present — see `adr-writer`'s "Reference ADRs" table for the current (pre-cleanup) state
+of that gap. No tag has been cut yet; consuming repos currently pin to a commit SHA.
 
 ## Reference implementation
 
